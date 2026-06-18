@@ -78,16 +78,18 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Correo electrónico</label>
                         <input type="email" id="email" class="form-control" placeholder="usuario@coopfinanzas.com.co" required>
+                        <div class="error-feedback" id="error-email">El correo electrónico es obligatorio</div>
                     </div>
                     
                     <div class="mb-3">
                         <label for="password" class="form-label">Contraseña</label>
-                        <div class="input-group">
+                        <div class="password-wrapper">
                             <input type="password" id="password" class="form-control border-end-0" placeholder="••••••••••" required>
-                            <span class="input-group-text bg-white border-start-0" id="toggle-pwd-btn" style="cursor: pointer; color: var(--text-muted);">
-                                <i data-lucide="eye" style="width: 16px; height: 16px;"></i>
-                            </span>
+                            <button type="button" id="toggle-pwd-btn" title="Mostrar/ocultar contraseña">
+                                <i data-lucide="eye" style="width: 18px; height: 18px;"></i>
+                            </button>
                         </div>
+                        <div class="error-feedback" id="error-password">La contraseña es obligatoria</div>
                     </div>
 
                     <div class="d-flex justify-content-between align-items-center core-options" style="font-size: 0.85rem; margin-top: 1.25rem;">
@@ -95,7 +97,7 @@
                             <input type="checkbox" class="form-check-input" id="rememberMe">
                             <label class="form-check-label" for="rememberMe">Recordar sesión</label>
                         </div>
-                        <a href="#" class="forgot-password">¿Olvidó su contraseña?</a>
+                        <a href="#" class="forgot-password text-center">¿Olvidó su contraseña?</a>
                     </div>
 
                     <button type="submit" class="btn-primary-custom">Ingresar al sistema</button>
@@ -112,16 +114,25 @@
                             <span class="demo-item-label">Administrador</span>
                             <span class="demo-item-email">admin@coopfinanzas.com.co</span>
                             <span class="demo-item-password">Admin@2026!</span>
+                            <button type="button" class="copy-action-btn" title="Copiar credenciales">
+                                <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+                            </button>
                         </div>
                         <div class="demo-item" data-user="operador@coopfinanzas.com.co" data-pass="Oper@2026!">
                             <span class="demo-item-label">Operador</span>
                             <span class="demo-item-email">operador@coopfinanzas.com.co</span>
                             <span class="demo-item-password">Oper@2026!</span>
+                            <button type="button" class="copy-action-btn" title="Copiar credenciales">
+                                <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+                            </button>
                         </div>
                         <div class="demo-item rounded-b-3" data-user="supervisor@coopfinanzas.com.co" data-pass="Super@2026!">
                             <span class="demo-item-label">Supervisor</span>
                             <span class="demo-item-email">supervisor@coopfinanzas.com.co</span>
                             <span class="demo-item-password">Super@2026!</span>
+                            <button type="button" class="copy-action-btn" title="Copiar credenciales">
+                                <i data-lucide="copy" style="width: 12px; height: 12px;"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
