@@ -94,12 +94,12 @@
             </div>
 
             <button type="button" id="toggle-sidebar-collapse" aria-label="Colapsar menú">
-                <i data-lucide="chevron-left" id="toggle-icon" style="width: 12px;"></i>
+                <i data-lucide="chevron-left" id="toggle-icon" style="width: 12px; height: 12px;"></i>
             </button>
         </aside>
 
         <main class="content-viewport">
-            <header class="d-flex align-items-start justify-content-between">
+            <div class="d-flex align-items-start justify-content-between" style="height: fit-content;">
                 <div class="d-flex align-items-center gap-2">
                     <button class="btn border d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
                         <i data-lucide="menu"></i>
@@ -113,7 +113,7 @@
                     <button class="btn-action-top"><i data-lucide="download"></i> Exportar</button>
                     <button class="btn-action-top"><i data-lucide="refresh-cw"></i> Actualizar</button>
                 </div>
-            </header>
+            </div>
 
             <div class="max-w-screen-2xl mx-auto w-100 p-0">
                 
@@ -136,8 +136,8 @@
                         <p class="metric-sub">Requieren atención urgente</p>
                     </div>
                     <div class="metric-card card-hover border-warning-subtle">
-                        <div class="metric-icon-box bg-warning-light text-warning"><i data-lucide="clock"></i></div>
-                        <h3 class="metric-number text-warning">2</h3>
+                        <div class="metric-icon-box" style="color: var(--yellow-dark);"><i data-lucide="clock"></i></div>
+                        <h3 class="metric-number" style="color: var(--yellow-dark);">2</h3>
                         <p class="metric-label">Próximos a vencer</p>
                         <p class="metric-sub">Vencen en las próximas 24 horas</p>
                     </div>
@@ -149,33 +149,120 @@
                     </div>
                 </div>
 
-                <div class="card card-table-holder shadow-sm rounded-xl">
-                    <div class="p-3 border-b bg-white d-flex flex-wrap items-center gap-3" style="border-radius: 16px 16px 0 0;">
+                <div class="card card-table-holder rounded-xl">
+                    <div class="border-b bg-white d-flex flex-wrap items-center" style="border-radius: 16px 16px 0 0; padding: .75rem 1rem; gap: .75rem;">
                         <div class="position-relative flex-grow-1 min-w-200">
                             <i data-lucide="search" class="search-input-icon"></i>
                             <input type="text" id="global-search" class="form-control text-sm" style="height: 2.25rem; background-color: #f4f6f9; padding: 0 .75rem 0 2rem;" 
                                 placeholder="Buscar por radicado o nombre del asociado..."
                             >
                         </div>
-                        <button class="btn-filter-toggle"><i data-lucide="funnel"></i> Filtros</button>
+
+                        <div class="d-flex align-items-center gap-2">
+                            <button id="btn-toggle-filters">
+                                <i data-lucide="funnel"></i>
+                                Filtros
+                                <span id="filter-counter-badge">0</span>
+                            </button>
+                            
+                            <button id="btn-clear-all-filters">
+                                <i data-lucide="x" style="width:12px; height:12px;"></i> Limpiar filtros
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="filter-dropdown-panel" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-2 border-bottom fade-in" style="border-bottom-color: var(--border-color); padding: 1rem;">
+                        <div>
+                            <label class="text-uppercase">Estado</label>
+                            <select id="filter-estado">
+                                <option value="">Todos</option>
+                                <option value="Radicado">Radicado</option>
+                                <option value="Asignado">Asignado</option>
+                                <option value="En Gestión">En Gestión</option>
+                                <option value="Pendiente de Información">Pendiente de Información</option>
+                                <option value="Respondido">Respondido</option>
+                                <option value="Cerrado">Cerrado</option>
+                                <option value="Reabierto">Reabierto</option>
+                                <option value="Anulado">Anulado</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-uppercase">Tipo de caso</label>
+                            <select id="filter-tipo">
+                                <option value="">Todos</option>
+                                <option value="Felicitación">Felicitación</option>
+                                <option value="Petición">Petición</option>
+                                <option value="Queja">Queja</option>
+                                <option value="Reclamo">Reclamo</option>
+                                <option value="Sugerencia">Sugerencia</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-uppercase">Servicio</label>
+                            <select id="filter-servicio">
+                                <option value="">Todos</option>
+                                <option value="Crédito">Crédito</option>
+                                <option value="Ahorro y Captación">Ahorro y Captación</option>
+                                <option value="Canales Digitales">Canales Digitales</option>
+                                <option value="Atención al Asociado">Atención al Asociado</option>
+                                <option value="Pagos y Transferencias">Pagos y Transferencias</option>
+                                <option value="Seguros y Protección">Seguros y Protección</option>
+                                <option value="Inversiones">Inversiones</option>
+                                <option value="Centrales de Riesgo">Centrales de Riesgo</option>
+                                <option value="Educación Cooperativa">Educación Cooperativa</option>
+                                <option value="Vinculación y Retiro">Vinculación y Retiro</option>
+                                <option value="Cartera y Cobranza">Cartera y Cobranza</option>
+                                <option value="Certificaciones y Documentos">Certificaciones y Documentos</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-uppercase">Responsable</label>
+                            <select id="filter-responsable">
+                                <option value="">Todos</option>
+                                <option value="Valentina Ospina Ríos">Valentina Ospina Ríos</option>
+                                <option value="Jorge Iván Castillo">Jorge Iván Castillo</option>
+                                <option value="Iván Darío Zapata">Iván Darío Zapata</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-uppercase">Prioridad</label>
+                            <select id="filter-prioridad">
+                                <option value="">Todas</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Normal">Normal</option>
+                                <option value="Alta">Alta</option>
+                                <option value="Crítica">Crítica</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label>SLA</label>
+                            <label class="d-flex align-items-center gap-2" style="cursor: pointer;">
+                                <input id="chk-sla-vencido" type="checkbox" name="filter-sla" class="chk-sla-group form-check-input m-0" style="width: 14px; height: 14px;">
+                                <span class="text-danger" style="font-size: 0.75rem; line-height: 1rem;">Solo vencidos</span>
+                            </label>
+                            <label class="d-flex align-items-center gap-2" style="cursor: pointer;">
+                                <input id="chk-sla-proximo" type="checkbox" name="filter-sla" class="chk-sla-group form-check-input m-0" style="width: 14px; height: 14px;">
+                                <span style="font-size: 0.75rem; line-height: 1rem; color: var(--yellow-dark)">Próximos a vencer</span>
+                            </label>
+                        </div>
                     </div>
 
                     <div class="table-container-responsive">
                         <table class="w-full custom-table">
                             <thead>
-                                <tr>
-                                    <th>Radicado</th>
-                                    <th>Fecha Rad.</th>
-                                    <th>Tipo</th>
-                                    <th>Servicio</th>
-                                    <th>Categoría</th>
-                                    <th>Subcategoría</th>
-                                    <th>Asociado</th>
-                                    <th>Responsable</th>
-                                    <th>Prioridad</th>
-                                    <th>Estado</th>
-                                    <th>Límite SLA</th>
-                                    <th>Semáforo</th>
+                                <tr class="custom-table-header">
+                                    <th data-sort="radicado" class="sortable-header">Radicado <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="fechaRad" class="sortable-header">Fecha Rad. <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="tipo" class="sortable-header">Tipo <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="servicio" class="sortable-header">Servicio <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="categoria" class="sortable-header">Categoría <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="subcategoria" class="sortable-header">Subcategoría <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="asociado" class="sortable-header">Asociado <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="responsable" class="sortable-header">Responsable <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="prioridad" class="sortable-header">Prioridad <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="estado" class="sortable-header">Estado <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="limiteSla" class="sortable-header">Límite SLA <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
+                                    <th data-sort="semaforo" class="sortable-header">Semáforo <i data-lucide="chevron-down" class="sort-icon-muted"></i></th>
                                     <th class="text-end">Acción</th>
                                 </tr>
                             </thead>
@@ -184,9 +271,18 @@
                         </table>
                     </div>
 
-                    <div class="p-3 bg-white border-top d-flex align-items-center justify-content-between flex-wrap gap-2">
-                        <span class="text-xs text-muted" id="table-counter-text">Mostrando registros</span>
-                        <div class="d-flex gap-1" id="pagination-wrapper">
+                    <div class="border-t d-flex align-items-center justify-content-between flex-wrap" style="padding: .75rem 1rem; gap: .75rem">
+                        <div class="d-flex align-items-center" style="gap: .75rem">
+                            <p id="table-counter-text">
+                                Mostrando 0 de 0 casos
+                            </p>
+                            <select id="items-per-page-select" class="px-2 border border-border bg-card focus:border-primary">
+                                <option value="10" selected>10 por página</option>
+                                <option value="25">25 por página</option>
+                                <option value="50">50 por página</option>
+                            </select>
+                        </div>
+                        <div class="d-flex align-items-center gap-1" id="pagination-wrapper">
                         </div>
                     </div>
                 </div>
