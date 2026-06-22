@@ -117,9 +117,9 @@ $(document).ready(function () {
             sidebar.toggleClass('collapsed');
             
             if (sidebar.hasClass('collapsed')) {
-                $(this).html('<i data-lucide="chevron-right" id="toggle-icon"></i>');
+                $(this).html('<i data-lucide="chevron-right" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
             } else {
-                $(this).html('<i data-lucide="chevron-left" id="toggle-icon"></i>');
+                $(this).html('<i data-lucide="chevron-left" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
             }
             lucide.createIcons();
         });

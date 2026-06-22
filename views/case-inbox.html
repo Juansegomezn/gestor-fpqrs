@@ -12,7 +12,7 @@
 
     <div class="dashboard-wrapper" id="case-inbox-container">
         
-        <aside class="sidebar-navigation d-none d-lg-flex" id="main-sidebar">
+        <aside class="sidebar-navigation d-none d-md-flex" id="main-sidebar">
             <div class="sidebar-header-wrapper">
                 <div class="sidebar-logo-area">
                     <img src="../assets/img/logo.webp" alt="Logo" width="32" height="39">
@@ -99,9 +99,9 @@
         </aside>
 
         <main class="content-viewport">
-            <div class="d-flex align-items-start justify-content-between" style="height: fit-content;">
+            <div class="d-flex align-items-start justify-content-between flex-wrap flex-md-nowrap mb-3" style="height: fit-content;">
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn border d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
+                    <button class="btn border d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileSidebar">
                         <i data-lucide="menu"></i>
                     </button>
                     <div>
@@ -288,7 +288,7 @@
         </main>
     </div>
 
-    <div class="offcanvas offcanvas-start sidebar-navigation mobile-drawer p-0" id="mobileSidebar" tabindex="-1">
+    <div class="offcanvas offcanvas-start sidebar-navigation mobile-drawer p-0" data-bs-backdrop="false" id="mobileSidebar" tabindex="-1">
         <div class="offcanvas-header px-4 pt-4 border-0">
             <h5 class="text-white font-bold m-0">GestorFPQRS</h5>
             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
