@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    if (typeof lucide !== 'undefined') { lucide.createIcons(); }
+
     // VISTA: LOGIN
     // Cambiar Icono Visibilidad Contraseña
     $('#toggle-pwd-btn').on('click', function () {
@@ -419,4 +421,94 @@ $(document).ready(function () {
     
     
     // VISTA: CASE DETAIL
+    if ($('#case-detail-container').length > 0) {
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        let radicadoParam = getQueryParam('radicado');
+
+        let selectedCase = null;
+
+        if (typeof MOCK_CASES === 'undefined' || !MOCK_CASES || MOCK_CASES.length === 0) {
+            console.error("ERROR: El array MOCK_CASES no está definido o está vacío. Sin datos disponibles.");
+        } else {
+            if (radicadoParam) {
+                selectedCase = MOCK_CASES.find(c => c.radicado === radicadoParam);
+            }
+
+            // Si no se encontró el caso por URL, buscar por prioridad Crítica
+            if (!selectedCase) {
+                selectedCase = MOCK_CASES.find(c => c.prioridad === 'Crítica');
+                
+                // Si no se encontró el caso por prioridad Crítica, tomar el primero
+                if (!selectedCase) {
+                    selectedCase = MOCK_CASES[0];
+                }
+                console.log("Caso seleccionado por Fallback:", selectedCase);
+            }
+        }
+
+        // Si se encontró el caso, actualizar el DOM
+        if (selectedCase) {
+            $('h1.text-2xl, .font-tabular').html(selectedCase.radicado);
+
+            $('[class*="status-"]').text(selectedCase.estado);
+
+            $('.bg-orange-50.text-orange-700, :contains("Queja")').filter('span').text(selectedCase.tipo);
+
+            const alertSlaBox = $('.bg-red-50');
+            const slaBadge = $('span:contains("Vencido"), [class*="sla-"]').filter('span');
+
+            if (selectedCase.semaforo === 'Vencido') {
+                slaBadge.html('<span class="w-1.5 h-1.5 rounded-full mr-1.5 bg-red-600"></span>Vencido');
+                alertSlaBox.show().removeClass('d-none');
+                alertSlaBox.find('p.text-xs').text(`La fecha límite de respuesta fue ${selectedCase.limiteSla}. Este caso requiere acción inmediata.`);
+            } else {
+                let colorCircle = selectedCase.semaforo === 'En tiempo' ? 'bg-green-600' : 'bg-gray-400';
+                slaBadge.html(`<span class="w-1.5 h-1.5 rounded-full mr-1.5 ${colorCircle}"></span>${selectedCase.semaforo}`);
+                alertSlaBox.hide().addClass('d-none');
+            }
+
+            $('p.text-xs.text-muted-foreground.mt-1').text(`Radicado el ${selectedCase.fechaRad} · Canal: ${selectedCase.canal || 'App Móvil'}`);
+
+            $('p:contains("Nombre")').next('p').text(selectedCase.asociado);
+            $('p:contains("Identificación")').next('p').text(selectedCase.identificacion || `CC ${Math.floor(Math.random() * 90000000) + 10000000}`);
+            $('p:contains("Correo")').next('p').text(selectedCase.correo || 'asociado@empresa.com.co');
+            $('p:contains("Celular")').next('p').text(selectedCase.celular || '3001234567');
+            $('p:contains("Dirección")').next('p').text(selectedCase.direccion || 'Calle Principal, Colombia');
+
+            $('p:contains("Servicio")').next('p').text(selectedCase.servicio);
+            $('p:contains("Categoría")').next('p').text(selectedCase.categoria);
+            $('p:contains("Subcategoría")').next('p').text(selectedCase.subcategoria);
+            $('p:contains("Responsable")').not(':contains("Transfiera")').next('p').text(selectedCase.responsable);
+            
+            const priorityBadge = $('p:contains("Prioridad")').next('[class*="priority-"]');
+            priorityBadge.text(selectedCase.prioridad);
+
+            $('p:contains("SLA aplicado")').next('p').text(selectedCase.slaAplicado || '4h');
+            $('p:contains("Fecha límite SLA")').next('p').text(selectedCase.limiteSla);
+            $('p:contains("Tipo de causa")').next('p').text(selectedCase.causa || selectedCase.subcategoria);
+
+            const descReal = selectedCase.descripcion || selectedCase.detalle || "No se especificó un texto de descripción para este radicado.";
+            $('.bg-muted\\/30.rounded-lg.p-4 p').text(descReal);
+
+            const sidebar = $('.bg-card:contains("Estado actual")');
+            sidebar.find('span:contains("Estado")').next('span').text(selectedCase.estado);
+            sidebar.find('span:contains("Prioridad")').next('span').text(selectedCase.prioridad);
+            sidebar.find('span:contains("Responsable")').next('span').text(selectedCase.responsable);
+
+            $('p:contains("Cambiar estado")').parent().find('button span').text(selectedCase.estado);
+            $('p:contains("Cambiar prioridad")').parent().find('button span').text(`Prioridad actual: ${selectedCase.prioridad}`);
+            $('p:contains("Reasignar caso")').parent().find('button span').text(`Responsable: ${selectedCase.responsable}`);
+            
+            console.log("DOM actualizado con los datos del caso.");
+        } else {
+            console.warn("No se encontró ningún caso válido para renderizar.");
+        }
+    }
+
+
+    // VISTA: FPQRS REGISTRATION FORM
 });

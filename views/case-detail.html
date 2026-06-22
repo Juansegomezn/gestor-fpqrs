@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GestorFPQRS — Gestión de Casos Financieros</title>
+    <link rel="icon" type="image/webp" href="../assets/img/logo.webp" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body class="bg-light">
+
+    <div class="dashboard-wrapper" id="case-detail-container">
+        
+      <aside class="sidebar-navigation d-none d-md-flex" id="main-sidebar">
+          <div class="sidebar-header-wrapper">
+              <div class="sidebar-logo-area">
+                  <img src="../assets/img/logo.webp" alt="Logo" width="32" height="39">
+                  <span class="sidebar-text">GestorFPQRS</span>
+              </div>
+          </div>
+          
+          <nav class="sidebar-menu-scroll">
+              <div class="menu-section">
+                  <p class="menu-section-title">Operación</p>
+                  <a href="case-inbox.html" class="menu-item">
+                      <i data-lucide="folder-open"></i>
+                      <span>Bandeja de Casos</span>
+                      <span class="counter-badge">5</span>
+                  </a>
+                  <a href="case-detail.html" class="menu-item active">
+                      <i data-lucide="file-text"></i>
+                      <span>Detalle de Caso</span>
+                  </a>
+                  <a href="fpqrs-registration-form.html" class="menu-item">
+                      <i data-lucide="list-checks"></i>
+                      <span>Registrar FPQRS</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="square-plus"></i>
+                      <span>Crear Caso (Operador)</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="chart-no-axes-column"></i>
+                      <span>Métricas</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="trending-up"></i>
+                      <span>Analítica</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="download"></i>
+                      <span>Exportar Casos</span>
+                  </a>
+              </div>
+
+              <div class="menu-section">
+                  <p class="menu-section-title">Administración</p>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="shield-check"></i>
+                      <span>Auditoría</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="settings"></i>
+                      <span>Parametrización</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="flask-conical"></i>
+                      <span>Parámetros Alt.</span>
+                  </a>
+                  <a href="#" class="menu-item">
+                      <i data-lucide="book-open"></i>
+                      <span>Modelo Cat. Resp.</span>
+                  </a>
+              </div>
+          </nav>
+
+          <div class="sidebar-footer-profile">
+              <button class="menu-item w-100 bg-transparent border-0 text-start m-0">
+                  <i data-lucide="bell" style="width: 18px;"></i>
+                  <span>Notificaciones</span>
+              </button>
+              <div class="user-info-box">
+                  <div class="avatar-circle"><i data-lucide="user" style="width:14px; color:#fff;"></i></div>
+                  <div class="min-w-0">
+                      <p class="m-0 text-white text-truncate text-ellipsis" style="font-size: 12px; line-height: 1rem;">Sofía Martínez</p>
+                      <p class="m-0 text-white-50 text-truncate text-ellipsis" style="font-size: 10px;">Administrador</p>
+                  </div>
+              </div>
+              <a href="login.html" class="user-logout text-white-50">
+                  <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                  <span>Cerrar sesión</span>
+              </a>
+          </div>
+
+          <button type="button" id="toggle-sidebar-collapse" aria-label="Colapsar menú">
+              <i data-lucide="chevron-left" id="toggle-icon" style="width: 12px; height: 12px;"></i>
+          </button>
+      </aside>
+
+      <main class="content-viewport overflow-y-auto style-scroll-main">
+          <div class="container-fluid px-4 py-4 max-w-2xl-container">
+              
+              <div class="d-flex flex-column flex-sm-row align-items-start justify-content-between mb-4 gap-3">
+                  <div>
+                      <div class="d-flex align-items-center gap-2 text-xs text-muted mb-2 font-medium">
+                          <a class="d-flex align-items-center gap-1 text-decoration-none text-muted hover-primary transition-colors" href="case-inbox.html">
+                              <i data-lucide="chevron-left" style="width: 12px; height: 12px;"></i>Bandeja de Casos
+                          </a>
+                          <span class="text-secondary">/</span>
+                          <span class="text-dark font-monospace" id="detail-breadcrumb-radicado">---</span>
+                      </div>
+                      <div class="d-flex align-items-center gap-2 flex-wrap">
+                          <h1 class="h4 m-0 fw-bold text-dark font-monospace" id="detail-title-radicado">---</h1>
+                          <span class="badge rounded-pill font-medium text-xs px-2.5 py-1" id="detail-badge-estado">---</span>
+                          <span class="badge rounded-pill font-medium text-xs px-2.5 py-1 text-bg-warning-subtle text-warning-emphasis" id="detail-badge-tipo">---</span>
+                          <span class="badge rounded-pill font-medium text-xs px-2.5 py-1 d-inline-flex align-items-center" id="detail-badge-sla-status">
+                              <span class="rounded-circle me-1.5" style="width: 6px; height: 6px;" id="detail-dot-sla"></span>
+                              <span id="detail-text-sla-status">---</span>
+                          </span>
+                      </div>
+                      <p class="text-xs text-muted mt-1 mb-0" id="detail-subtitle-meta">Radicado el --/--/---- · Canal: Web</p>
+                  </div>
+                  <button class="btn btn-action-reasign d-flex align-items-center gap-2 px-3 py-2 shrink-0">
+                      <i data-lucide="user-check" style="width: 15px; height: 15px;"></i>Reasignar
+                  </button>
+              </div>
+
+              <div class="alert alert-danger border-danger-subtle rounded-3 p-3 mb-4 d-none align-items-center gap-3" id="detail-alert-vencido">
+                  <i data-lucide="triangle-alert" class="text-danger shrink-0" style="width: 18px; height: 18px;"></i>
+                  <div>
+                      <p class="text-sm fw-bold text-danger-emphasis m-0">SLA vencido — Atención urgente requerida</p>
+                      <p class="text-xs text-danger m-0 mt-0.5" id="detail-alert-vencido-text">La fecha límite de respuesta ya expiró. Este caso requiere acción inmediata.</p>
+                  </div>
+              </div>
+
+              <div class="row g-4">
+                  
+                  <div class="col-12 col-xl-8 d-flex flex-column gap-4">
+                      
+                      <div class="card card-custom-layout rounded-3 shadow-sm">
+                          <div class="card-header bg-transparent py-3 d-flex align-items-center gap-2">
+                              <i data-lucide="user" class="text-primary" style="width: 15px; height: 15px;"></i>
+                              <h2 class="h6 m-0 fw-bold text-dark">Datos del Asociado</h2>
+                          </div>
+                          <div class="card-body py-3">
+                              <div class="row g-3">
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Nombre</p>
+                                      <p class="text-sm fw-bold text-dark mb-0" id="assoc-nombre">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Identificación</p>
+                                      <p class="text-sm text-dark font-monospace mb-0" id="assoc-id">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Correo</p>
+                                      <p class="text-sm text-primary mb-0 text-break" id="assoc-correo">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Celular</p>
+                                      <p class="text-sm text-dark font-monospace mb-0" id="assoc-celular">3209876543</p>
+                                  </div>
+                                  <div class="col-6 col-sm-8">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Dirección</p>
+                                      <p class="text-sm text-dark mb-0" id="assoc-direccion">Av El Poblado #12-45, Medellín</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card card-custom-layout rounded-3 shadow-sm">
+                          <div class="card-header bg-transparent py-3 d-flex align-items-center gap-2">
+                              <i data-lucide="briefcase" class="text-primary" style="width: 15px; height: 15px;"></i>
+                              <h2 class="h6 m-0 fw-bold text-dark">Datos del Caso</h2>
+                          </div>
+                          <div class="card-body py-3">
+                              <div class="row g-3">
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Servicio</p>
+                                      <p class="text-sm font-medium text-dark mb-0" id="case-servicio">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Categoría</p>
+                                      <p class="text-sm font-medium text-dark mb-0" id="case-categoria">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Subcategoría</p>
+                                      <p class="text-sm font-medium text-dark mb-0 text-truncate" id="case-subcategoria">---</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Responsable</p>
+                                      <p class="text-sm text-dark mb-0 fw-bold" id="case-responsable">---</p>
+                                      <p class="text-muted m-0" style="font-size: 11px;">Operaciones Financieras</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Prioridad</p>
+                                      <span class="badge font-medium text-xs px-2.5 py-1" id="case-badge-prioridad">---</span>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">SLA Aplicado</p>
+                                      <p class="text-sm fw-bold font-monospace text-dark mb-0">4h</p>
+                                  </div>
+                                  <div class="col-6 col-sm-4">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Fecha límite SLA</p>
+                                      <p class="text-sm fw-bold font-monospace mb-0" id="case-sla-limite-text">--/--/---- --:--</p>
+                                  </div>
+                                  <div class="col-6 col-sm-8">
+                                      <p class="text-uppercase text-muted fw-bold tracking-wide mb-1" style="font-size: 10px;">Tipo de causa</p>
+                                      <p class="text-sm text-dark mb-0" id="case-causa-fallback">Falla en pasarela de pago PSE</p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card card-custom-layout rounded-3 shadow-sm">
+                          <div class="card-header bg-transparent p-0 border-bottom">
+                              <div class="d-flex overflow-x-auto style-scroll-tabs" id="custom-tabs-container">
+                                  <button class="nav-tab-custom active" data-tab="tab-descripcion">
+                                      <i data-lucide="file-text" style="width: 14px; height: 14px;"></i>Descripción
+                                  </button>
+                                  <button class="nav-tab-custom" data-tab="tab-comentarios">
+                                      <i data-lucide="message-square" style="width: 14px; height: 14px;"></i>Comentarios
+                                      <span class="badge-tab-counter">3</span>
+                                  </button>
+                                  <button class="nav-tab-custom" data-tab="tab-adjuntos">
+                                      <i data-lucide="paperclip" style="width: 14px; height: 14px;"></i>Adjuntos
+                                      <span class="badge-tab-counter">3</span>
+                                  </button>
+                                  <button class="nav-tab-custom" data-tab="tab-historial">
+                                      <i data-lucide="history" style="width: 14px; height: 14px;"></i>Historial
+                                      <span class="badge-tab-counter">11</span>
+                                  </button>
+                                  <button class="nav-tab-custom" data-tab="tab-respuestas">
+                                      <i data-lucide="message-square" style="width: 14px; height: 14px;"></i>Respuestas
+                                  </button>
+                              </div>
+                          </div>
+                          <div class="card-body p-4">
+                              <div class="tab-panel-custom active-panel" id="tab-descripcion">
+                                  <p class="text-uppercase text-muted fw-bold tracking-wide mb-2" style="font-size: 11px;">Descripción del caso</p>
+                                  <div class="bg-light-subtle-box rounded-3 p-3">
+                                      <p class="text-sm text-dark leading-relaxed m-0" id="detail-case-description">---</p>
+                                  </div>
+                              </div>
+                              <div class="tab-panel-custom d-none" id="tab-comentarios">
+                                  <p class="text-muted text-sm m-0">Sección de comentarios del caso.</p>
+                              </div>
+                              <div class="tab-panel-custom d-none" id="tab-adjuntos">
+                                  <p class="text-muted text-sm m-0">Lista de archivos adjuntos subidos.</p>
+                              </div>
+                              <div class="tab-panel-custom d-none" id="tab-historial">
+                                  <p class="text-muted text-sm m-0">Trazabilidad histórica de modificaciones del caso.</p>
+                              </div>
+                              <div class="tab-panel-custom d-none" id="tab-respuestas">
+                                  <p class="text-muted text-sm m-0">Respuestas oficiales emitidas al asociado.</p>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="col-12 col-xl-4 d-flex flex-column gap-3">
+                      
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <p class="text-uppercase text-muted fw-bold tracking-wide mb-3" style="font-size: 11px;">Estado actual</p>
+                          <div class="d-flex flex-column gap-2.5">
+                              <div class="d-flex align-items-center justify-content-between">
+                                  <span class="text-xs text-muted">Estado</span>
+                                  <span class="badge rounded-pill font-medium text-xs px-2 py-0.5" id="side-summary-estado">---</span>
+                              </div>
+                              <div class="d-flex align-items-center justify-content-between">
+                                  <span class="text-xs text-muted">Prioridad</span>
+                                  <span class="badge rounded-pill font-medium text-xs px-2 py-0.5" id="side-summary-prioridad">---</span>
+                              </div>
+                              <div class="d-flex align-items-start justify-content-between gap-2">
+                                  <span class="text-xs text-muted shrink-0">Responsable</span>
+                                  <span class="text-xs font-medium text-dark text-end" id="side-summary-responsable">---</span>
+                              </div>
+                              <div class="d-flex align-items-center justify-content-between">
+                                  <span class="text-xs text-muted">SLA</span>
+                                  <span class="text-xs fw-bold font-monospace text-dark">4h</span>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <div class="d-flex align-items-center gap-2 mb-3">
+                              <i data-lucide="settings" class="text-primary" style="width: 14px; height: 14px;"></i>
+                              <p class="text-sm fw-bold text-dark m-0">Cambiar estado</p>
+                          </div>
+                          <div class="dropdown">
+                              <button class="w-100 btn btn-dropdown-action d-flex align-items-center justify-content-between px-3 py-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <span id="side-btn-current-estado">---</span>
+                                  <i data-lucide="chevron-down" class="text-muted" style="width: 14px; height: 14px;"></i>
+                              </button>
+                              <ul class="dropdown-menu w-100 shadow-sm">
+                                  <li><a class="dropdown-item text-sm" href="#">Radicado</a></li>
+                                  <li><a class="dropdown-item text-sm" href="#">En Gestión</a></li>
+                                  <li><a class="dropdown-item text-sm" href="#">Pendiente de Información</a></li>
+                                  <li><a class="dropdown-item text-sm" href="#">Cerrado</a></li>
+                              </ul>
+                          </div>
+                      </div>
+
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                              <i data-lucide="triangle-alert" class="text-warning" style="width: 14px; height: 14px;"></i>
+                              <p class="text-sm fw-bold text-dark m-0">Cambiar prioridad</p>
+                          </div>
+                          <p class="text-xs text-muted mb-3">Solo se muestran las prioridades permitidas para esta categoría. El SLA se recalculará automáticamente.</p>
+                          <button class="w-100 btn btn-priority-yellow d-flex align-items-center justify-content-between px-3 py-2 fw-medium">
+                              <span id="side-text-current-prioridad">Prioridad actual: ---</span>
+                              <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                          </button>
+                      </div>
+
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <div class="d-flex align-items-center gap-2 mb-2">
+                              <i data-lucide="user-check" class="text-primary" style="width: 14px; height: 14px;"></i>
+                              <p class="text-sm fw-bold text-dark m-0">Reasignar caso</p>
+                          </div>
+                          <p class="text-xs text-muted mb-3">Transfiera este caso a otro operador. El cambio quedará registrado en la trazabilidad.</p>
+                          <button class="w-100 btn btn-reasign-blue d-flex align-items-center justify-content-between px-3 py-2 fw-medium">
+                              <span id="side-btn-current-responsable">Responsable: ---</span>
+                              <i data-lucide="user-check" style="width: 14px; height: 14px;"></i>
+                          </button>
+                      </div>
+
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <div class="d-flex align-items-center gap-2 mb-3">
+                              <i data-lucide="message-square" class="text-primary" style="width: 14px; height: 14px;"></i>
+                              <p class="text-sm fw-bold text-dark m-0">Registrar observación</p>
+                          </div>
+                          <form class="d-flex flex-column gap-3">
+                              <div>
+                                  <textarea rows="3" class="form-control text-sm shadow-none resize-none textarea-custom" placeholder="Escriba su observación interna o respuesta al asociado..." name="observacion"></textarea>
+                              </div>
+                              <div class="form-check d-flex align-items-center gap-1 min-h-0 p-0 m-0">
+                                  <input class="form-check-input checkbox-custom m-0" type="checkbox" id="checkNotificar" name="esRespuesta">
+                                  <label class="form-check-label text-xs text-dark cursor-pointer ms-1.5" for="checkNotificar">Notificar esta respuesta al asociado</label>
+                              </div>
+                              <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold text-sm transition-all shadow-none btn-submit-observacion">Registrar observación</button>
+                          </form>
+                      </div>
+
+                      <div class="card card-custom-layout p-3 rounded-3 shadow-sm">
+                          <p class="text-uppercase text-muted fw-bold tracking-wide mb-3" style="font-size: 11px;">Acciones finales</p>
+                          <div class="d-flex flex-column gap-2">
+                              <button class="btn btn-dark w-100 py-2 fw-semibold text-sm d-flex align-items-center justify-content-center gap-2 shadow-none transition-all">
+                                  <i data-lucide="lock" style="width: 14px; height: 14px;"></i>Cerrar caso
+                              </button>
+                              <button class="btn btn-danger-action w-100 py-2 fw-semibold text-sm d-flex align-items-center justify-content-center gap-2 shadow-none transition-all">
+                                  <i data-lucide="circle-x" style="width: 14px; height: 14px;"></i>Anular caso
+                              </button>
+                          </div>
+                      </div>
+
+                  </div>
+              </div>
+          </div>
+      </main>
+    </div>
+
+    <div class="offcanvas offcanvas-start mobile-drawer p-0" id="mobileSidebar" tabindex="-1">
+        <div class="offcanvas-header px-4 pt-4 border-0">
+            <h5 class="text-white font-bold m-0">GestorFPQRS</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body d-flex flex-column p-0 px-4 pb-4">
+            <nav class="flex-grow-1">
+                <div class="menu-section">
+                    <a href="case-inbox.html" class="menu-item"><i data-lucide="folder-open"></i> <span>Bandeja de Casos</span></a>
+                    <a href="case-detail.html" class="menu-item active"><i data-lucide="file-text"></i> <span>Detalle de Caso</span></a>
+                    <a href="fpqrs-registration-form.html" class="menu-item"><i data-lucide="list-checks"></i> <span>Registrar FPQRS</span></a>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../js/mockData.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+</html>
