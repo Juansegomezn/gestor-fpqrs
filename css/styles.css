@@ -367,6 +367,23 @@ body {
     justify-content: center;
 }
 
+#main-sidebar.collapsed .menu-item {
+    position: relative !important;
+}
+
+#main-sidebar.collapsed .counter-badge {
+    position: absolute !important;
+    width: 1rem !important;
+    height: 1rem !important;
+    top: 4px !important;
+    right: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
 /* Botón flotante de flecha */
 #toggle-sidebar-collapse {
     position: absolute;
@@ -1030,8 +1047,7 @@ body {
     }
 
     #main-sidebar.collapsed .sidebar-text,
-    #main-sidebar.collapsed .menu-item span,
-    #main-sidebar.collapsed .menu-item .counter-badge,
+    #main-sidebar.collapsed .menu-item span:not(.counter-badge)
     #main-sidebar.collapsed .menu-section-title,
     #main-sidebar.collapsed .user-info-box div:last-child,
     #main-sidebar.collapsed .user-logout span {
