@@ -97,6 +97,19 @@ $(document).ready(function () {
         let activeSortColumn = null;
         let sortAscending = true;
         
+        function populateResponsablesFilter() {
+            const selectResponsable = $('#filter-responsable');            
+            const todosLosResponsables = MOCK_CASES.map(caso => caso.responsable ? caso.responsable.trim() : '');
+            const responsablesUnicos = [...new Set(todosLosResponsables)]
+                .filter(nombre => nombre !== '')
+                .sort((a, b) => a.localeCompare(b));
+
+            selectResponsable.html('<option value="">Todos</option>');
+            $.each(responsablesUnicos, function(idx, nombre) {
+                selectResponsable.append(`<option value="${nombre}">${nombre}</option>`);
+            });
+        }
+        
         $('#toggle-sidebar-collapse').on('click', function () {
             const sidebar = $('#main-sidebar');
             const icon = $('#toggle-icon');
@@ -111,7 +124,7 @@ $(document).ready(function () {
             lucide.createIcons();
         });
 
-                $('#btn-toggle-filters').on('click', function() {
+        $('#btn-toggle-filters').on('click', function() {
             $('#filter-dropdown-panel').toggleClass('d-none');
         });
 
@@ -400,6 +413,7 @@ $(document).ready(function () {
         });
 
         // Inicializar Renderizado Primario
+        populateResponsablesFilter();
         executeFiltersPipeline();
     }
     
