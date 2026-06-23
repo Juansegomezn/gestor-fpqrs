@@ -428,56 +428,52 @@ $(document).ready(function () {
         }
 
         let radicadoParam = getQueryParam('radicado');
-
         let selectedCase = null;
 
-        if (typeof MOCK_CASES === 'undefined' || !MOCK_CASES || MOCK_CASES.length === 0) {
-            console.error("ERROR: El array MOCK_CASES no está definido o está vacío. Sin datos disponibles.");
-        } else {
+        if (typeof MOCK_CASES !== 'undefined' && MOCK_CASES.length > 0) {
             if (radicadoParam) {
                 selectedCase = MOCK_CASES.find(c => c.radicado === radicadoParam);
             }
-
-            // Si no se encontró el caso por URL, buscar por prioridad Crítica
             if (!selectedCase) {
-                selectedCase = MOCK_CASES.find(c => c.prioridad === 'Crítica');
-                
-                // Si no se encontró el caso por prioridad Crítica, tomar el primero
-                if (!selectedCase) {
-                    selectedCase = MOCK_CASES[0];
-                }
-                console.log("Caso seleccionado por Fallback:", selectedCase);
+                // Fallback al caso con prioridad Crítica más reciente sí no, se toma el primero
+                selectedCase = MOCK_CASES.find(c => c.prioridad === 'Crítica') || MOCK_CASES[0];
             }
         }
 
-        // Si se encontró el caso, actualizar el DOM
         if (selectedCase) {
-            $('h1.text-2xl, .font-tabular').html(selectedCase.radicado);
+            $('h1.text-2xl, .font-tabular, #txt-radicado-top').text(selectedCase.radicado);
+            $('p.text-xs.text-muted-foreground.mt-1, #txt-meta-top').text(`Radicado el ${selectedCase.fechaRad} · Canal: ${selectedCase.canal || 'App Móvil'}`);
+            
+            const statusBadge = $('[class*="status-"]').first();
+            statusBadge.text(selectedCase.estado);
+            statusBadge.removeClass('status-pendiente status-asignado status-cerrado');
+            if (selectedCase.estado === 'Pendiente de Información') statusBadge.addClass('status-pendiente');
+            else if (selectedCase.estado === 'Cerrado') statusBadge.addClass('status-cerrado');
+            else statusBadge.addClass('status-asignado');
 
-            $('[class*="status-"]').text(selectedCase.estado);
+            const tipoBadge = $('.badge-custom').first();
+            tipoBadge.text(selectedCase.tipo);
 
-            $('.bg-orange-50.text-orange-700, :contains("Queja")').filter('span').text(selectedCase.tipo);
-
-            const alertSlaBox = $('.bg-red-50');
-            const slaBadge = $('span:contains("Vencido"), [class*="sla-"]').filter('span');
-
-            if (selectedCase.semaforo === 'Vencido') {
-                slaBadge.html('<span class="w-1.5 h-1.5 rounded-full mr-1.5 bg-red-600"></span>Vencido');
-                alertSlaBox.show().removeClass('d-none');
-                alertSlaBox.find('p.text-xs').text(`La fecha límite de respuesta fue ${selectedCase.limiteSla}. Este caso requiere acción inmediata.`);
+            const alertZone = $('#sla-alert-zone');
+            if (selectedCase.semaforo === 'Vencido' || selectedCase.prioridad === 'Crítica') {
+                alertZone.html(`
+                    <div class="alert alert-danger border-danger rounded-3 p-3 mb-4 d-flex align-items-center gap-3 fade-in" role="alert">
+                        <i data-lucide="triangle-alert" class="text-danger flex-shrink-0" style="width: 20px; height: 20px;"></i>
+                        <div>
+                            <p class="m-0 small fw-bold text-danger" style="font-weight: 700 !important;">SLA vencido — Atención urgente requerida</p>
+                            <p class="m-0 text-danger" style="font-size: 0.75rem; margin-top: 2px !important;">La fecha límite de respuesta fue ${selectedCase.limiteSla}. Este caso requiere acción inmediata.</p>
+                        </div>
+                    </div>
+                `);
             } else {
-                let colorCircle = selectedCase.semaforo === 'En tiempo' ? 'bg-green-600' : 'bg-gray-400';
-                slaBadge.html(`<span class="w-1.5 h-1.5 rounded-full mr-1.5 ${colorCircle}"></span>${selectedCase.semaforo}`);
-                alertSlaBox.hide().addClass('d-none');
+                alertZone.empty();
             }
 
-            $('p.text-xs.text-muted-foreground.mt-1').text(`Radicado el ${selectedCase.fechaRad} · Canal: ${selectedCase.canal || 'App Móvil'}`);
-
             $('p:contains("Nombre")').next('p').text(selectedCase.asociado);
-            $('p:contains("Identificación")').next('p').text(selectedCase.identificacion || `CC ${Math.floor(Math.random() * 90000000) + 10000000}`);
-            $('p:contains("Correo")').next('p').text(selectedCase.correo || 'asociado@empresa.com.co');
-            $('p:contains("Celular")').next('p').text(selectedCase.celular || '3001234567');
-            $('p:contains("Dirección")').next('p').text(selectedCase.direccion || 'Calle Principal, Colombia');
+            $('p:contains("Identificación")').next('p').text(selectedCase.identificacion || "CC 71456023");
+            $('p:contains("Correo")').next('p').text(selectedCase.correo || "jl.patino@empresa.com.co");
+            $('p:contains("Celular")').next('p').text(selectedCase.celular || "3209876543");
+            $('p:contains("Dirección")').next('p').text(selectedCase.direccion || "Av El Poblado #12-45, Medellín");
 
             $('p:contains("Servicio")').next('p').text(selectedCase.servicio);
             $('p:contains("Categoría")').next('p').text(selectedCase.categoria);
@@ -486,19 +482,23 @@ $(document).ready(function () {
             
             const priorityBadge = $('p:contains("Prioridad")').next('[class*="priority-"]');
             priorityBadge.text(selectedCase.prioridad);
+            priorityBadge.removeClass('priority-critica priority-alta priority-normal priority-baja');
+            if (selectedCase.prioridad === 'Crítica') priorityBadge.addClass('priority-critica');
+            else if (selectedCase.prioridad === 'Alta') priorityBadge.addClass('priority-alta');
+            else priorityBadge.addClass('priority-normal');
 
-            $('p:contains("SLA aplicado")').next('p').text(selectedCase.slaAplicado || '4h');
+            $('p:contains("SLA aplicado")').next('p').text(selectedCase.slaAplicado || "4h");
             $('p:contains("Fecha límite SLA")').next('p').text(selectedCase.limiteSla);
             $('p:contains("Tipo de causa")').next('p').text(selectedCase.causa || selectedCase.subcategoria);
 
-            const descReal = selectedCase.descripcion || selectedCase.detalle || "No se especificó un texto de descripción para este radicado.";
-            $('.bg-muted\\/30.rounded-lg.p-4 p').text(descReal);
+            const descReal = selectedCase.descripcion || selectedCase.detalle || "No se adjuntó descripción detallada.";
+            $('.bg-muted\\/30.rounded-lg.p-4 p, #txt-descripcion-caso').text(descReal);
 
-            const sidebar = $('.bg-card:contains("Estado actual")');
-            sidebar.find('span:contains("Estado")').next('span').text(selectedCase.estado);
-            sidebar.find('span:contains("Prioridad")').next('span').text(selectedCase.prioridad);
-            sidebar.find('span:contains("Responsable")').next('span').text(selectedCase.responsable);
-
+            const sidebarStatus = $('.bg-card:contains("Estado actual")');
+            sidebarStatus.find('span:contains("Estado")').next('span').text(selectedCase.estado);
+            sidebarStatus.find('span:contains("Prioridad")').next('span').text(selectedCase.prioridad);
+            sidebarStatus.find('span:contains("Responsable")').not(':contains("Transfiera")').next('span').text(selectedCase.responsable);
+            
             $('p:contains("Cambiar estado")').parent().find('button span').text(selectedCase.estado);
             $('p:contains("Cambiar prioridad")').parent().find('button span').text(`Prioridad actual: ${selectedCase.prioridad}`);
             $('p:contains("Reasignar caso")').parent().find('button span').text(`Responsable: ${selectedCase.responsable}`);
