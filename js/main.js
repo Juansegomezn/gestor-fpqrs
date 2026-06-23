@@ -89,6 +89,21 @@ $(document).ready(function () {
         }
     });
 
+
+    // Sidebar toggle fuera condicional de vista, ya que se require en 2 vistas
+    $('#toggle-sidebar-collapse').on('click', function () {
+        const sidebar = $('#main-sidebar');
+        const icon = $('#toggle-icon');
+        
+        sidebar.toggleClass('collapsed');
+        
+        if (sidebar.hasClass('collapsed')) {
+            $(this).html('<i data-lucide="chevron-right" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
+        } else {
+            $(this).html('<i data-lucide="chevron-left" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
+        }
+        lucide.createIcons();
+    });
     
     // VISTA: CASE INBOX
     if ($('#case-inbox-container').length > 0) {
@@ -112,20 +127,6 @@ $(document).ready(function () {
             });
         }
         
-        $('#toggle-sidebar-collapse').on('click', function () {
-            const sidebar = $('#main-sidebar');
-            const icon = $('#toggle-icon');
-            
-            sidebar.toggleClass('collapsed');
-            
-            if (sidebar.hasClass('collapsed')) {
-                $(this).html('<i data-lucide="chevron-right" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
-            } else {
-                $(this).html('<i data-lucide="chevron-left" id="toggle-icon" style="width: 12px; height: 12px;"></i>');
-            }
-            lucide.createIcons();
-        });
-
         $('#btn-toggle-filters').on('click', function() {
             $('#filter-dropdown-panel').toggleClass('d-none');
         });
@@ -441,24 +442,27 @@ $(document).ready(function () {
         }
 
         if (selectedCase) {
-            $('h1.text-2xl, .font-tabular, #txt-radicado-top').text(selectedCase.radicado);
-            $('p.text-xs.text-muted-foreground.mt-1, #txt-meta-top').text(`Radicado el ${selectedCase.fechaRad} · Canal: ${selectedCase.canal || 'App Móvil'}`);
+            // Datos de Encabezado
+            $('#detail-breadcrumb-radicado').text(selectedCase.radicado);
+            $('#detail-title-radicado').text(selectedCase.radicado);
+            $('#detail-badge-estado').text(selectedCase.estado).attr('class', 'badge rounded-pill font-medium text-xs px-2.5 py-1 text-bg-warning-subtle text-warning-emphasis');
+            $('#detail-badge-tipo').text(selectedCase.tipo || 'Queja');
             
-            const statusBadge = $('[class*="status-"]').first();
-            statusBadge.text(selectedCase.estado);
-            statusBadge.removeClass('status-pendiente status-asignado status-cerrado');
-            if (selectedCase.estado === 'Pendiente de Información') statusBadge.addClass('status-pendiente');
-            else if (selectedCase.estado === 'Cerrado') statusBadge.addClass('status-cerrado');
-            else statusBadge.addClass('status-asignado');
+            // Datos de SLA
+            $('#detail-text-sla-status').text(selectedCase.semaforo || 'Vencido');
+            if (selectedCase.semaforo === 'Vencido') {
+                $('#detail-badge-sla-status').attr('class', 'badge rounded-pill font-medium text-xs px-2.5 py-1 text-bg-danger-subtle text-danger');
+                $('#detail-dot-sla').css('background-color', 'var(--bs-danger)');
+            }
 
-            const tipoBadge = $('.badge-custom').first();
-            tipoBadge.text(selectedCase.tipo);
+            $('#detail-subtitle-meta').text(`Radicado el ${selectedCase.fechaRad} · Canal: ${selectedCase.canal || 'App Móvil'}`);
+            $('.btn-action-reasign').html(`<i data-lucide="user-check" style="width: 14px; height: 14px;"></i> Reasignar: ${selectedCase.responsable}`);
 
-            const alertZone = $('#sla-alert-zone');
-            if (selectedCase.semaforo === 'Vencido' || selectedCase.prioridad === 'Crítica') {
-                alertZone.html(`
-                    <div class="alert alert-danger border-danger rounded-3 p-3 mb-4 d-flex align-items-center gap-3 fade-in" role="alert">
-                        <i data-lucide="triangle-alert" class="text-danger flex-shrink-0" style="width: 20px; height: 20px;"></i>
+            // Elementos de Alerta SLA
+            if (selectedCase.semaforo === 'Vencido') {
+                $('#sla-alert-zone').html(`
+                    <div class="alert border-danger rounded-3 p-3 mb-4 d-flex align-items-center gap-3" style="background-color: rgb(254 242 242);">
+                        <i data-lucide="triangle-alert" class="text-danger flex-shrink-0" style="width: 18px; height: 18px;"></i>
                         <div>
                             <p class="m-0 small fw-bold text-danger" style="font-weight: 700 !important;">SLA vencido — Atención urgente requerida</p>
                             <p class="m-0 text-danger" style="font-size: 0.75rem; margin-top: 2px !important;">La fecha límite de respuesta fue ${selectedCase.limiteSla}. Este caso requiere acción inmediata.</p>
@@ -466,48 +470,60 @@ $(document).ready(function () {
                     </div>
                 `);
             } else {
-                alertZone.empty();
+                $('#sla-alert-zone').empty();
             }
 
-            $('p:contains("Nombre")').next('p').text(selectedCase.asociado);
-            $('p:contains("Identificación")').next('p').text(selectedCase.identificacion || "CC 71456023");
-            $('p:contains("Correo")').next('p').text(selectedCase.correo || "jl.patino@empresa.com.co");
-            $('p:contains("Celular")').next('p').text(selectedCase.celular || "3209876543");
-            $('p:contains("Dirección")').next('p').text(selectedCase.direccion || "Av El Poblado #12-45, Medellín");
+            // Datos del Asociado
+            $('#assoc-nombre').text(selectedCase.nombre || 'Jorge Luis Patiño Restrepo');
+            $('#assoc-id').text(selectedCase.identificacion || 'CC 71456023');
+            $('#assoc-correo').text(selectedCase.correo || 'jl.patino@empresa.com.co');
 
-            $('p:contains("Servicio")').next('p').text(selectedCase.servicio);
-            $('p:contains("Categoría")').next('p').text(selectedCase.categoria);
-            $('p:contains("Subcategoría")').next('p').text(selectedCase.subcategoria);
-            $('p:contains("Responsable")').not(':contains("Transfiera")').next('p').text(selectedCase.responsable);
+            // Datos del Caso
+            $('#case-servicio').text(selectedCase.servicio);
+            $('#case-categoria').text(selectedCase.categoria);
+            $('#case-subcategoria').text(selectedCase.subcategoria).attr('title', selectedCase.subcategoria);
+            $('#case-responsable').text(selectedCase.responsable);
             
-            const priorityBadge = $('p:contains("Prioridad")').next('[class*="priority-"]');
-            priorityBadge.text(selectedCase.prioridad);
-            priorityBadge.removeClass('priority-critica priority-alta priority-normal priority-baja');
-            if (selectedCase.prioridad === 'Crítica') priorityBadge.addClass('priority-critica');
-            else if (selectedCase.prioridad === 'Alta') priorityBadge.addClass('priority-alta');
-            else priorityBadge.addClass('priority-normal');
-
-            $('p:contains("SLA aplicado")').next('p').text(selectedCase.slaAplicado || "4h");
-            $('p:contains("Fecha límite SLA")').next('p').text(selectedCase.limiteSla);
-            $('p:contains("Tipo de causa")').next('p').text(selectedCase.causa || selectedCase.subcategoria);
-
-            const descReal = selectedCase.descripcion || selectedCase.detalle || "No se adjuntó descripción detallada.";
-            $('.bg-muted\\/30.rounded-lg.p-4 p, #txt-descripcion-caso').text(descReal);
-
-            const sidebarStatus = $('.bg-card:contains("Estado actual")');
-            sidebarStatus.find('span:contains("Estado")').next('span').text(selectedCase.estado);
-            sidebarStatus.find('span:contains("Prioridad")').next('span').text(selectedCase.prioridad);
-            sidebarStatus.find('span:contains("Responsable")').not(':contains("Transfiera")').next('span').text(selectedCase.responsable);
+            // Datos de Prioridad
+            $('#case-badge-prioridad')
+                .text(selectedCase.prioridad)
+                .attr('class', `badge font-medium text-xs px-2.5 py-1 ${selectedCase.prioridad === 'Crítica' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning'}`);
             
-            $('p:contains("Cambiar estado")').parent().find('button span').text(selectedCase.estado);
-            $('p:contains("Cambiar prioridad")').parent().find('button span').text(`Prioridad actual: ${selectedCase.prioridad}`);
-            $('p:contains("Reasignar caso")').parent().find('button span').text(`Responsable: ${selectedCase.responsable}`);
-            
-            console.log("DOM actualizado con los datos del caso.");
-        } else {
-            console.warn("No se encontró ningún caso válido para renderizar.");
+            $('#case-sla-limite-text').text(selectedCase.limiteSla);
+            if (selectedCase.semaforo === 'Vencido') {
+                $('#case-sla-limite-text').addClass('text-danger');
+            }
+            $('#case-causa-fallback').text(selectedCase.causa || 'Falla en pasarela de pago PSE');
+            $('#detail-case-description').text(selectedCase.descripcion || 'No se registra descripción para este caso.');
+
+            // Datos de Estado Actual
+            $('#side-summary-estado').text(selectedCase.estado).attr('class', 'badge bg-warning-subtle text-warning rounded-pill font-medium text-xs px-2 py-0.5');
+            $('#side-summary-prioridad').text(selectedCase.prioridad).attr('class', `badge ${selectedCase.prioridad === 'Crítica' ? 'bg-danger-subtle text-danger' : 'bg-warning-subtle text-warning'} rounded-pill font-medium text-xs px-2 py-0.5`);
+            $('#side-summary-responsable').text(selectedCase.responsable);
+
+            // Acciones
+            $('#side-btn-current-estado').text(selectedCase.estado);
+            $('#side-text-current-prioridad').text(`Prioridad actual: ${selectedCase.prioridad}`);
+            $('#side-btn-current-responsable').html(`Responsable: ${selectedCase.responsable} <i data-lucide="user-check" style="width: 14px; height: 14px; margin-left: auto;"></i>`);
+
+            // Reinicializar los iconos de Lucide cargados dinámicamente
+            if (window.lucide) {
+                lucide.createIcons();
+            }
         }
     }
+
+    $('#custom-tabs-container .nav-tab-custom').on('click', function (e) {
+        e.preventDefault();
+        
+        $('#custom-tabs-container .nav-tab-custom').removeClass('active');
+        $(this).addClass('active');
+
+        $('.tab-panel-custom').addClass('d-none');
+
+        const targetTab = $(this).data('tab');
+        $(`#${targetTab}`).removeClass('d-none');
+    });
 
 
     // VISTA: FPQRS REGISTRATION FORM
